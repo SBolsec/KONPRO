@@ -1,0 +1,2 @@
+# KONPRO
+Konkurentno programiranje
