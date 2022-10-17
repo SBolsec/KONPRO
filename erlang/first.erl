@@ -1,50 +1,55 @@
 -module(first).
--export([addElement/2, sortList/2, sortList/3, sortiranje/2]).
+-export([addElement/2, cheapSort/2, sortList/2, sortList/3]).
 
-% napraviti funkciju koj dodaje eleent u listu
+% 1.
 
-addElement(Lista, Broj) ->
-    Lista ++ [Broj].
+addElement(List, Element) ->
+    List ++ [Element].
 
-sortList(Lista, Broj) ->
-    sort(Lista, Broj, 1).
 
-sort(Lista, Broj, N) ->
+
+% 2.
+
+cheapSort(List, Element) -> lists:sort(List ++ [Element]).
+
+sortList(List, Element) ->
+    sort(List, Element, 1).
+
+sort(List, Element, N) ->
     if
-        length(Lista) < N ->
-            Lista ++ [Broj];
+        length(List) < N ->
+            List ++ [Element];
         true ->
-            Br = lists:nth(N, Lista),
+            CurrentElement = lists:nth(N, List),
 
             if
-                Br > Broj ->
-                    {One, Two} = lists:split(N-1, Lista),
-                    One ++ [Broj] ++ Two;
+                CurrentElement > Element ->
+                    {First, Second} = lists:split(N-1, List),
+                    First ++ [Element] ++ Second;
                 true ->
-                    sort(Lista, Broj, N + 1)
+                    sort(List, Element, N + 1)
             end
     end.
 
 
-sortList(Lista, Broj, Krit) ->
-    sort(Lista, Broj, 1, Krit).
+% 3.
 
-sort(Lista, Broj, N, Krit) ->
+sortList(List, Element, Sorter) ->
+    sort(List, Element, 1, Sorter).
+
+sort(List, Element, N, Sorter) ->
     if
-        length(Lista) < N ->
-            Lista ++ [Broj];
+        length(List) < N ->
+            List ++ [Element];
         true ->
-            Br = lists:nth(N, Lista),
-            Cond = Krit(Br, Broj),
+            CurrentElement = lists:nth(N, List),
+            Cond = Sorter(CurrentElement, Element),
 
             if
                 Cond ->
-                    {One, Two} = lists:split(N-1, Lista),
-                    One ++ [Broj] ++ Two;
+                    {First, Second} = lists:split(N-1, List),
+                    First ++ [Element] ++ Second;
                 true ->
-                    sort(Lista, Broj, N + 1, Krit)
+                    sort(List, Element, N+1, Sorter)
             end
     end.
-
-sortiranje(Lista, Broj) ->
-    lists:sort(Lista ++ [Broj]).

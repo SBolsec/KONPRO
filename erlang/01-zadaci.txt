@@ -1,0 +1,15 @@
+1. Napraviti funkciju koja dodaje broj u listu. Argumenti funkcije su lista i broj.
+
+2. Napraviti funkciju koja u uzlazno sortiranu listu dodaje broj na odgovarajuce mjesto kako bi lista bila sortirana.
+
+3. Napraviti isto kao prethodna funkcija uz dodatan argument funkcije viseg reda za sortiranje.
+
+4. Napraviti funkciju koja dodaje n-torke (tuple) u obliku {Key, Value} u listu, a lista je sortirana po kljucevima.
+
+5. Napraviti funkciju pretrazivanja liste po kljucu. Argumenti su lista i kljuc, a vraca vrijednost.
+
+6. Napraviti stablo (funkcije dodavanja, pretrazivanja elemenata u stablu) {Key, Value}
+    - razmisliti kako organizirati stablo
+
+7. Potraziti u Erlangovoj dokumentaciji gotove module koji predstavljaju mape
+    - odluciti se za jedan i koristiti ga u prethodnoj funkciji
