@@ -1,5 +1,5 @@
 -module(first).
--export([addElement/2, cheapSort/2, sortList/2, sortList/3]).
+-export([addElement/2, cheapSort/2, sortList/2, sortedAdd/2, sortList/3, sortedAdd/3]).
 
 % 1.
 
@@ -32,6 +32,16 @@ sort(List, Element, N) ->
     end.
 
 
+sortedAdd(List, Element) -> 
+    sortedAddHelper(List, Element, []).
+
+sortedAddHelper([First | Rest], Element, Result) when First > Element ->
+    Result ++ [Element, First] ++ Rest;
+sortedAddHelper([First | Rest], Element, Result) ->
+    sortedAddHelper(Rest, Element, Result ++ [First]);
+sortedAddHelper(List, Element, Result) when length(List) == 0 ->
+    Result ++ [Element].
+
 % 3.
 
 sortList(List, Element, Sorter) ->
@@ -53,3 +63,15 @@ sort(List, Element, N, Sorter) ->
                     sort(List, Element, N+1, Sorter)
             end
     end.
+
+sortedAdd(List, Element, Sorter) -> 
+    sortedAddHelper(List, Element, [], Sorter).
+
+sortedAddHelper([First | Rest], Element, Result, Sorter)->
+    Cond = Sorter(First, Element),
+    if 
+        Cond -> Result ++ [Element, First] ++ Rest;
+        true -> sortedAddHelper(Rest, Element, Result ++ [First])
+    end;
+sortedAddHelper(List, Element, Result, _) when length(List) == 0 ->
+    Result ++ [Element].
