@@ -1,5 +1,5 @@
 -module(first).
--export([addElement/2, cheapSort/2, sortList/2, sortedAdd/2, sortList/3, sortedAdd/3, addTuple/2, findKey/2, addTreeNode/2]).
+-export([addElement/2, cheapSort/2, sortList/2, sortedAdd/2, sortList/3, sortedAdd/3, addTuple/2, findKey/2, addTreeNode/2, findTreeNode/2]).
 
 % 1.
 
@@ -122,3 +122,13 @@ addTreeNode(#{ value := CurrentValue, left := Left, right := Right }, Value) whe
     #{ value => CurrentValue, left => Left, right => Right};
 addTreeNode(_, Value) ->
     #{ value => Value, left => null, right => null }.
+
+findTreeNode(#{ value := Value, left := Left, right := Right }, Key) when Value == Key ->
+    #{ value => Value, left => Left, right => Right };
+findTreeNode(#{ value := Value, left := Left}, Key) when Key < Value ->
+    findTreeNode(Left, Key);
+findTreeNode(#{ value := Value, right := Right }, Key) when Key > Value ->
+    findTreeNode(Right, Key);
+findTreeNode(_, _) ->
+    null.
+
