@@ -1,5 +1,5 @@
 -module(first).
--export([addElement/2, cheapSort/2, sortList/2, sortedAdd/2, sortList/3, sortedAdd/3, addTuple/2]).
+-export([addElement/2, cheapSort/2, sortList/2, sortedAdd/2, sortList/3, sortedAdd/3, addTuple/2, findKey/2]).
 
 % 1.
 
@@ -88,3 +88,12 @@ addTupleHelper([First | Rest], Tuple, Result) ->
     addTupleHelper(Rest, Tuple, Result ++ [First]);
 addTupleHelper(List, Tuple, Result) when length(List) == 0 ->
     Result ++ [Tuple].
+
+% 5.
+
+findKey([{FirstKey, FirstValue}, _], Key) when FirstKey == Key ->
+    FirstValue;
+findKey(List, _) when length(List) == 0 ->
+    null;
+findKey([_ | Rest], Key) ->
+    findKey(Rest, Key).
