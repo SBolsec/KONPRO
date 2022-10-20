@@ -1,5 +1,5 @@
 -module(first).
--export([addElement/2, cheapSort/2, sortList/2, sortedAdd/2, sortList/3, sortedAdd/3, addTuple/2, findKey/2]).
+-export([addElement/2, cheapSort/2, sortList/2, sortedAdd/2, sortList/3, sortedAdd/3, addTuple/2, findKey/2, addTreeNode/2]).
 
 % 1.
 
@@ -97,3 +97,28 @@ findKey(List, _) when length(List) == 0 ->
     null;
 findKey([_ | Rest], Key) ->
     findKey(Rest, Key).
+
+
+% 6.
+
+% tree is map with:
+%   - value: node value
+%   - left: left child      literal null if no child
+%   - right: right child    literal null if no child
+
+addTreeNode(#{ value := CurrentValue, left := Left, right := Right }, Value) when Value < CurrentValue, Left == null ->
+    Node = #{ value => Value, left => null, right => null },
+    #{ value => CurrentValue, left => Node, right => Right};
+addTreeNode(#{ value := CurrentValue, left := Left, right := Right }, Value) when Value < CurrentValue ->
+    Node = addTreeNode(Left, Value),
+    #{ value => CurrentValue, left => Node, right => Right};
+addTreeNode(#{ value := CurrentValue, left := Left, right := Right }, Value) when Value > CurrentValue, Right == null ->
+    Node = #{ value => Value, left => null, right => null },
+    #{ value => CurrentValue, left => Left, right => Node};
+addTreeNode(#{ value := CurrentValue, left := Left, right := Right }, Value) when Value > CurrentValue ->
+    Node = addTreeNode(Right, Value),
+    #{ value => CurrentValue, left => Left, right => Node};
+addTreeNode(#{ value := CurrentValue, left := Left, right := Right }, Value) when Value == CurrentValue ->
+    #{ value => CurrentValue, left => Left, right => Right};
+addTreeNode(_, Value) ->
+    #{ value => Value, left => null, right => null }.
