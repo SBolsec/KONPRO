@@ -1,0 +1,5 @@
+Kao pripremu za ovo predavanje isprogramirajte sljedeći zadatak. 
+
+Potražiti u Erlangovoj dokumentaciji gotove module koji predstavljaju mape, 
+odlučiti se za jedan i napraviti funkcije za stavljanje, brisanje, zamjenu i pretraživanje mape 
+(ključ je n-torka koja ima ime i prezime, vrijednost je lista prijatelja - n-torka ime i prezime.
