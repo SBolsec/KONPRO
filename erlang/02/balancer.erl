@@ -15,13 +15,13 @@ main(Pid1, Pid2) ->
     receive
         {From, {Action, {Name, Surname}}} ->
             if
-                Name == pero -> Pid1 ! {From, {Action, {Name, Surname}}};
+                Name == pero -> Pid1 ! {From, {Action, {Name, Surname}}};       % staviti neki pravi uvjet za load balancing
                 true -> Pid2 ! {From, {Action, {Name, Surname}}}
             end,
             main(Pid1, Pid2);
         {From, {Action, {Name, Surname}, Friends}} ->
             if
-                Name == pero -> Pid1 ! {From, {Action, {Name, Surname}, Friends}};
+                Name == pero -> Pid1 ! {From, {Action, {Name, Surname}, Friends}};  % isto
                 true -> Pid2 ! {From, {Action, {Name, Surname}, Friends}}
             end,
             main(Pid1, Pid2)
