@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  yd:
+    build: .
+    hostname: y.local
+    command: -sname y -run distributed start_global
+  xd:
+    build: .
+    hostname: x.local
+    command: -sname x -run distributed call_global poruka
+    links:
+    - yd:y
