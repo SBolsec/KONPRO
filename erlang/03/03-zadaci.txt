@@ -1,4 +1,6 @@
 1. pokrenuti distribuirano (u Dockerima) procese koji obrađuju dio ključeva od prošli puta
+- glavni pokrene dva procesa u dockerima i prosljeduje zahtjeve njima
+- ovo je za load balancer
 
 2. napraviti distribuiranu registraciju procesa
 
