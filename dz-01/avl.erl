@@ -3,7 +3,7 @@
 
 -export([add/2, get/2]).
 
-% Node shape: [CurrentValue, BalanceFactor, LeftChild, RightChild]
+% Node shape: [CurrentValue, Height, LeftChild, RightChild]
 % If node has no child, that child is empty list []
 
 add(Value, Tree) ->
@@ -14,37 +14,45 @@ add(Value, Tree) ->
     end.
 
 addHelper(Value, Tree) when length(Tree) == 0 ->
-    [Value, 0, [], []];
-addHelper(Value, [CV, BF, LC, RC]) when Value < CV, length(LC) == 0 ->
-    [CV, BF - 1, addHelper(Value, LC), RC];
-addHelper(Value, [CV, BF, LC, RC]) when Value > CV, length(RC) == 0 ->
-    [CV, BF + 1, LC, addHelper(Value, RC)];
-addHelper(Value, [CV, _, LC, RC]) when Value < CV ->
+    [Value, 1, [], []];
+addHelper(Value, [CV, H, LC, RC]) when Value < CV, length(LC) == 0 ->
+    [CV, H + 1, addHelper(Value, LC), RC];
+addHelper(Value, [CV, H, LC, RC]) when Value > CV, length(RC) == 0 ->
+    [CV, H + 1, LC, addHelper(Value, RC)];
+addHelper(Value, [CV, H, LC, RC]) when Value < CV ->
     Node = addHelper(Value, LC),
-    NewBF = balanceFactor(RC) - balanceFactor(Node),
+    HL = height(Node),
+    HR = height(RC),
+    BalanceFactor = HR - HL,
     if
-        NewBF /= -2 ->
-            [CV, NewBF, Node, RC];
+        BalanceFactor /= -2 ->
+            [CV, erlang:max(HR, HL) + 1, Node, RC];
         true ->
-            [NCV, NBF, NLC, NRC] = Node,
+            [NCV, NH, NLC, NRC] = Node,
+            HNLC = height(NLC),
+            HNRC = height(NRC),
             if
-                NBF == -1 ->
-                    [NCV, 0, NLC, [CV, 0, [], RC]];
+                HNLC > HNRC ->
+                    [NCV, NH - 1, NLC, [CV, 0, [], RC]];
                 true ->
                     [NRCV, _, NRLC, _] = NRC,
                     [NRCV, 0, [NCV, 0, NRLC, []], [CV, 0, [], RC]]
             end
     end;
-addHelper(Value, [CV, _, LC, RC]) when Value > CV ->
+addHelper(Value, [CV, H, LC, RC]) when Value > CV ->
     Node = addHelper(Value, RC),
-    NewBF = balanceFactor(Node) - balanceFactor(LC),
+    HL = height(LC),
+    HR = height(Node),
+    BalanceFactor = HR - HL,
     if
-        NewBF /= 2 ->
-            [CV, NewBF, LC, Node];
+        BalanceFactor /= 2 ->
+            [CV, erlang:max(HR, HL) + 1, LC, Node];
         true ->
-            [NCV, NBF, NLC, NRC] = Node,
+            [NCV, NH, NLC, NRC] = Node,
+            HNLC = height(NLC),
+            HNRC = height(NRC),
             if
-                NBF == 1 ->
+                HNLC > HNRC ->
                     [NCV, 0, [CV, 0, LC, []], NRC];
                 true ->
                     [NLCV, _, _, NLRC] = NLC,
@@ -52,14 +60,10 @@ addHelper(Value, [CV, _, LC, RC]) when Value > CV ->
             end
     end.
 
-balanceFactor(Node) when length(Node) == 0 ->
+height(Node) when length(Node) == 0 ->
     0;
-balanceFactor([_, BF | _]) when BF == 0 ->
-    1;
-balanceFactor([_, BF | _]) when BF < 0 ->
-    BF - 1;
-balanceFactor([_, BF | _]) when BF > 0 ->
-    BF + 1.
+height([_, H | _]) ->
+    H.
 
 get(_, Tree) when length(Tree) == 0 ->
     undefined;
