@@ -72,15 +72,11 @@ balanceFactor([_, _, LeftChild, RightChild]) ->
 nodeHeight(LeftChild, RightChild) ->
   1 + erlang:max(height(LeftChild), height(RightChild)).
 
-delete(Value, Tree) ->
-  Node = get(Value, Tree),
-  if
-    Node /= undefined -> Tree;
-    true -> deleteHelper(Value, Tree)
-  end.
+delete(_, Node) when length(Node) == 0 ->
+  [];
+delete(_, [V, _, LC, RC]) when length(LC) == 0, length(RC) == 0 ->
+  [].
 
-deleteHelper(Value, Tree) ->
-  [Value, Tree].
 
 get(_, Tree) when length(Tree) == 0 ->
   undefined;
