@@ -1,20 +1,14 @@
-%%%-------------------------------------------------------------------
-%%% @author sbolsec
-%%% @copyright (C) 2022, <COMPANY>
-%%% @doc
-%%%
-%%% @end
-%%% Created : 28. Oct 2022 19:27
-%%%-------------------------------------------------------------------
 -module(avl).
 -author("sbolsec").
 
-%% API
 -export([start/0]).
 -export([add/2, delete/2, get/2]).
 
 % Node shape: [Value, Height, LeftChild, RightChild]
 % If node has no child, that child is empty list []
+
+
+% add
 
 add(Value, Tree) when length(Tree) == 0 ->
   [Value, 1, [], []];
@@ -51,6 +45,78 @@ add(Value, [V, _, LC, RC]) when Value > V ->
       Node
   end.
 
+
+%delete
+
+delete(_, Node) when length(Node) == 0 ->
+  [];
+delete(Value, [V, _, LC, RC]) when Value == V, length(LC) == 0, length(RC) == 0 ->
+  [];
+delete(Value, [V, _, LC, RC]) when Value == V, length(LC) == 0 ->
+  RC;
+delete(Value, [V, _, LC, RC]) when Value == V, length(RC) == 0 ->
+  LC;
+delete(Value, [V, _, LC, RC]) when Value == V, length(LC) /= 0, length(RC) /= 0 ->
+  MinNode = getMinValueNode(RC),
+  [MV | _] = MinNode,
+  Right = delete(MV, RC),
+  [MV, nodeHeight(LC, Right), LC, Right];
+delete(Value, [V, H, LC, RC]) when Value < V ->
+  LeftChild = delete(Value, LC),
+  if 
+    length(LeftChild) == 0 ->
+      [V, H, LeftChild, RC];
+    true ->
+      Height = nodeHeight(LeftChild, RC),
+      Node = [V, Height, LeftChild, RC],
+      BalanceFactor = balanceFactor(Node),
+      [LeftValue | _] = LeftChild,
+      if
+        BalanceFactor < -1, Value < LeftValue ->
+          rightRotate(Node);
+        BalanceFactor < -1, Value > LeftValue ->
+          L = leftRotate(LeftChild),
+          rightRotate([V, Height, L, RC]);
+        true ->
+          Node
+      end
+  end;
+delete(Value, [V, H, LC, RC]) when Value > V ->
+  RightChild = delete(Value, RC),
+  if
+    length(RightChild) == 0 ->
+      [V, H, LC, RightChild];
+    true ->
+      Height = nodeHeight(LC, RightChild),
+      Node = [V, Height, LC, RightChild],
+      BalanceFactor = balanceFactor(Node),
+      [RightValue | _] = RightChild,
+      if
+        BalanceFactor > 1, Value > RightValue ->
+          leftRotate(Node);
+        BalanceFactor > 1, Value < RightValue ->
+          R = rightRotate(RightChild),
+          leftRotate([V, Height, LC, R]);
+        true ->
+          Node
+      end
+  end.
+
+
+% get
+
+get(_, Tree) when length(Tree) == 0 ->
+  undefined;
+get(Value, [CV | Rest]) when Value == CV ->
+  [CV] ++ Rest;
+get(Value, [CV, _, LC, _]) when Value < CV ->
+  get(Value, LC);
+get(Value, [CV, _, _, RC]) when Value > CV ->
+  get(Value, RC).
+
+
+% utility
+
 leftRotate([V, _, LC, RC]) ->
   [RV, _, RLC, RRC] = RC,
   Left = [V, nodeHeight(LC, RLC), LC, RLC],
@@ -72,20 +138,15 @@ balanceFactor([_, _, LeftChild, RightChild]) ->
 nodeHeight(LeftChild, RightChild) ->
   1 + erlang:max(height(LeftChild), height(RightChild)).
 
-delete(_, Node) when length(Node) == 0 ->
-  [];
-delete(_, [V, _, LC, RC]) when length(LC) == 0, length(RC) == 0 ->
-  [].
+
+getMinValueNode([V, H, LC, RC]) when length(LC) == 0 ->
+  [V, H, LC, RC];
+getMinValueNode([_, _, LC, _]) ->
+  getMinValueNode(LC).
 
 
-get(_, Tree) when length(Tree) == 0 ->
-  undefined;
-get(Value, [CV | Rest]) when Value == CV ->
-  [CV] ++ Rest;
-get(Value, [CV, _, LC, _]) when Value < CV ->
-  get(Value, LC);
-get(Value, [CV, _, _, RC]) when Value > CV ->
-  get(Value, RC).
+
+% test
 
 start() ->
   R1 = add(20, []),
@@ -99,5 +160,4 @@ start() ->
   R9 = add(24, R8),
   R10 = add(21, R9),
   R11 = add(21, R10),
-  R11,
-  io:format("End").
+  io:format("~w~n", [R11]).
