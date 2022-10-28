@@ -15,36 +15,9 @@ add(Value, Tree) when length(Tree) == 0 ->
 add(Value, [V | Rest]) when Value == V ->
   [V] ++ Rest;
 add(Value, [V, _, LC, RC]) when Value < V ->
-  LeftChild = add(Value, LC),
-  Height = nodeHeight(LeftChild, RC),
-  Node = [V, Height, LeftChild, RC],
-  BalanceFactor = balanceFactor(Node),
-  [LeftValue | _] = LeftChild,
-  if
-    BalanceFactor < -1, Value < LeftValue ->
-      rightRotate(Node);
-    BalanceFactor < -1, Value > LeftValue ->
-      L = leftRotate(LeftChild),
-      rightRotate([V, Height, L, RC]);
-    true ->
-      Node
-  end;
+  balanceLeft(Value, [V, add(Value, LC), RC]);
 add(Value, [V, _, LC, RC]) when Value > V ->
-  RightChild = add(Value, RC),
-  Height = nodeHeight(LC, RightChild),
-  Node = [V, Height, LC, RightChild],
-  BalanceFactor = balanceFactor(Node),
-  [RightValue | _] = RightChild,
-  if
-    BalanceFactor > 1, Value > RightValue ->
-      leftRotate(Node);
-    BalanceFactor > 1, Value < RightValue ->
-      R = rightRotate(RightChild),
-      leftRotate([V, Height, LC, R]);
-    true ->
-      Node
-  end.
-
+  balanceRight(Value, [V, LC, add(Value, RC)]).
 
 %delete
 
@@ -67,19 +40,7 @@ delete(Value, [V, H, LC, RC]) when Value < V ->
     length(LeftChild) == 0 ->
       [V, H, LeftChild, RC];
     true ->
-      Height = nodeHeight(LeftChild, RC),
-      Node = [V, Height, LeftChild, RC],
-      BalanceFactor = balanceFactor(Node),
-      [LeftValue | _] = LeftChild,
-      if
-        BalanceFactor < -1, Value < LeftValue ->
-          rightRotate(Node);
-        BalanceFactor < -1, Value > LeftValue ->
-          L = leftRotate(LeftChild),
-          rightRotate([V, Height, L, RC]);
-        true ->
-          Node
-      end
+      balanceLeft(Value, [V, LeftChild, RC])
   end;
 delete(Value, [V, H, LC, RC]) when Value > V ->
   RightChild = delete(Value, RC),
@@ -87,19 +48,7 @@ delete(Value, [V, H, LC, RC]) when Value > V ->
     length(RightChild) == 0 ->
       [V, H, LC, RightChild];
     true ->
-      Height = nodeHeight(LC, RightChild),
-      Node = [V, Height, LC, RightChild],
-      BalanceFactor = balanceFactor(Node),
-      [RightValue | _] = RightChild,
-      if
-        BalanceFactor > 1, Value > RightValue ->
-          leftRotate(Node);
-        BalanceFactor > 1, Value < RightValue ->
-          R = rightRotate(RightChild),
-          leftRotate([V, Height, LC, R]);
-        true ->
-          Node
-      end
+      balanceRight(Value, [V, LC, RightChild])
   end.
 
 
@@ -116,6 +65,36 @@ get(Value, [CV, _, _, RC]) when Value > CV ->
 
 
 % utility
+
+balanceLeft(Value, [V, LC, RC]) ->
+  Height = nodeHeight(LC, RC),
+  Node = [V, Height, LC, RC],
+  BalanceFactor = balanceFactor(Node),
+  [LeftValue | _] = LC,
+  if
+    BalanceFactor < -1, Value < LeftValue ->
+      rightRotate(Node);
+    BalanceFactor < -1, Value > LeftValue ->
+      L = leftRotate(LC),
+      rightRotate([V, Height, L, RC]);
+    true ->
+      Node
+  end.
+
+balanceRight(Value, [V, LC, RC]) ->
+  Height = nodeHeight(LC, RC),
+  Node = [V, Height, LC, RC],
+  BalanceFactor = balanceFactor(Node),
+  [RightValue | _] = RC,
+  if
+    BalanceFactor > 1, Value > RightValue ->
+      leftRotate(Node);
+    BalanceFactor > 1, Value < RightValue ->
+      R = rightRotate(RC),
+      leftRotate([V, Height, LC, R]);
+    true ->
+      Node
+  end.
 
 leftRotate([V, _, LC, RC]) ->
   [RV, _, RLC, RRC] = RC,
