@@ -11,22 +11,17 @@
 
 %% API
 -export([start/0]).
--export([add/2, get/2]).
+-export([add/2, delete/2, get/2]).
 
 % Node shape: [Value, Height, LeftChild, RightChild]
 % If node has no child, that child is empty list []
 
-add(Value, Tree) ->
-  Node = get(Value, Tree),
-  if
-    Node /= undefined -> Tree;
-    true -> addHelper(Value, Tree)
-  end.
-
-addHelper(Value, Tree) when length(Tree) == 0 ->
+add(Value, Tree) when length(Tree) == 0 ->
   [Value, 1, [], []];
-addHelper(Value, [V, _, LC, RC]) when Value < V ->
-  LeftChild = addHelper(Value, LC),
+add(Value, [V | Rest]) when Value == V ->
+  [V] ++ Rest;
+add(Value, [V, _, LC, RC]) when Value < V ->
+  LeftChild = add(Value, LC),
   Height = nodeHeight(LeftChild, RC),
   Node = [V, Height, LeftChild, RC],
   BalanceFactor = balanceFactor(Node),
@@ -40,8 +35,8 @@ addHelper(Value, [V, _, LC, RC]) when Value < V ->
     true ->
       Node
   end;
-addHelper(Value, [V, _, LC, RC]) when Value > V ->
-  RightChild = addHelper(Value, RC),
+add(Value, [V, _, LC, RC]) when Value > V ->
+  RightChild = add(Value, RC),
   Height = nodeHeight(LC, RightChild),
   Node = [V, Height, LC, RightChild],
   BalanceFactor = balanceFactor(Node),
@@ -77,6 +72,16 @@ balanceFactor([_, _, LeftChild, RightChild]) ->
 nodeHeight(LeftChild, RightChild) ->
   1 + erlang:max(height(LeftChild), height(RightChild)).
 
+delete(Value, Tree) ->
+  Node = get(Value, Tree),
+  if
+    Node /= undefined -> Tree;
+    true -> deleteHelper(Value, Tree)
+  end.
+
+deleteHelper(Value, Tree) ->
+  [Value, Tree].
+
 get(_, Tree) when length(Tree) == 0 ->
   undefined;
 get(Value, [CV | Rest]) when Value == CV ->
@@ -87,15 +92,16 @@ get(Value, [CV, _, _, RC]) when Value > CV ->
   get(Value, RC).
 
 start() ->
-  R1=add(20, []),
-  R2=add(35, R1),
-  R3=add(40, R2),
-  R4=add(10, R3),
-  R5=add(17, R4),
-  R6=add(18, R5),
-  R7=add(19, R6),
-  R8=add(27, R7),
-  R9=add(24, R8),
-  R10=add(21, R9),
-  R10,
+  R1 = add(20, []),
+  R2 = add(35, R1),
+  R3 = add(40, R2),
+  R4 = add(10, R3),
+  R5 = add(17, R4),
+  R6 = add(18, R5),
+  R7 = add(19, R6),
+  R8 = add(27, R7),
+  R9 = add(24, R8),
+  R10 = add(21, R9),
+  R11 = add(21, R10),
+  R11,
   io:format("End").
