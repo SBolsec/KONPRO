@@ -64,6 +64,7 @@ add(Value, [V, _, LC, RC]) when Value < V ->
 add(Value, [V, _, LC, RC]) when Value > V ->
   balanceRight(Value, [V, LC, add(Value, RC)]).
 
+
 %delete
 
 delete(_, Node) when length(Node) == 0 ->
@@ -161,7 +162,6 @@ balanceFactor([_, _, LeftChild, RightChild]) ->
 
 nodeHeight(LeftChild, RightChild) ->
   1 + erlang:max(height(LeftChild), height(RightChild)).
-
 
 getMinValueNode([V, H, LC, RC]) when length(LC) == 0 ->
   [V, H, LC, RC];
