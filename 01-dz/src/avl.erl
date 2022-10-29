@@ -1,11 +1,56 @@
 -module(avl).
 -author("sbolsec").
 
--export([start/0]).
--export([add/2, delete/2, get/2]).
+-export([startServer/0, serverLoop/0]).
+-export([add/1, delete/1, get/1]).
 
 % Node shape: [Value, Height, LeftChild, RightChild]
 % If node has no child, that child is empty list []
+
+
+% server
+
+startServer() ->
+  Pid = spawn(avl, serverLoop, []),
+  register(avlServer, Pid).
+
+serverLoop() ->
+  serverLoop([]).
+
+serverLoop(Tree) ->
+  io:format("AVL tree: ~w~n", [Tree]),
+  receive 
+    {_, {add, Value}} ->
+      serverLoop(add(Value, Tree));
+    {_, {delete, Value}} ->
+      serverLoop(delete(Value, Tree));
+    {From, {get, Value}} ->
+      Node = get(Value, Tree),
+      From ! Node,
+      serverLoop(Tree);
+    stop ->
+      true
+  end.
+
+
+% client
+
+startClient({get, X}) ->
+  avlServer ! {self(), {get, X}},
+  receive
+    Result -> Result
+  end;
+startClient(X) ->
+  avlServer ! {self(), X}.
+
+add(Value) ->
+  startClient({add, Value}).
+
+delete(Value) ->
+  startClient({delete, Value}).
+
+get(Value) ->
+  startClient({get, Value}).
 
 
 % add
@@ -122,21 +167,3 @@ getMinValueNode([V, H, LC, RC]) when length(LC) == 0 ->
   [V, H, LC, RC];
 getMinValueNode([_, _, LC, _]) ->
   getMinValueNode(LC).
-
-
-
-% test
-
-start() ->
-  R1 = add(20, []),
-  R2 = add(35, R1),
-  R3 = add(40, R2),
-  R4 = add(10, R3),
-  R5 = add(17, R4),
-  R6 = add(18, R5),
-  R7 = add(19, R6),
-  R8 = add(27, R7),
-  R9 = add(24, R8),
-  R10 = add(21, R9),
-  R11 = add(21, R10),
-  io:format("~w~n", [R11]).
