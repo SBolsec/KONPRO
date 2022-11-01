@@ -2,7 +2,7 @@
 -author("sbolsec").
 
 -export([startServer/0, serverLoop/0]).
--export([add/1, delete/1, get/1]).
+-export([add/1, delete/1, get/1, print/0]).
 
 % Node shape: [Value, Height, LeftChild, RightChild]
 % If node has no child, that child is empty list []
@@ -18,8 +18,7 @@ serverLoop() ->
   serverLoop([]).
 
 serverLoop(Tree) ->
-  io:format("AVL tree: ~w~n", [Tree]),
-  receive 
+  receive
     {_, {add, Value}} ->
       serverLoop(add(Value, Tree));
     {_, {delete, Value}} ->
@@ -28,6 +27,8 @@ serverLoop(Tree) ->
       Node = get(Value, Tree),
       From ! Node,
       serverLoop(Tree);
+    {_, {print}} ->
+      serverLoop(print(Tree));
     stop ->
       true
   end.
@@ -51,6 +52,9 @@ delete(Value) ->
 
 get(Value) ->
   startClient({get, Value}).
+
+print() ->
+  startClient({print}).
 
 
 % add
@@ -82,17 +86,25 @@ delete(Value, [V, _, LC, RC]) when Value == V, length(LC) /= 0, length(RC) /= 0 
   [MV, nodeHeight(LC, Right), LC, Right];
 delete(Value, [V, H, LC, RC]) when Value < V ->
   LeftChild = delete(Value, LC),
-  if 
+  Node = [V, H, LeftChild, RC],
+  BalanceFactor = balanceFactor(Node),
+  if
+    length(LeftChild) == 0, BalanceFactor > 1 ->
+      leftRotate(Node);
     length(LeftChild) == 0 ->
-      [V, H, LeftChild, RC];
+      Node;
     true ->
       balanceLeft(Value, [V, LeftChild, RC])
   end;
 delete(Value, [V, H, LC, RC]) when Value > V ->
   RightChild = delete(Value, RC),
+  Node = [V, H, LC, RightChild],
+  BalanceFactor = balanceFactor(Node),
   if
+    length(RightChild) == 0, BalanceFactor < -1 ->
+      rightRotate(Node);
     length(RightChild) == 0 ->
-      [V, H, LC, RightChild];
+      Node;
     true ->
       balanceRight(Value, [V, LC, RightChild])
   end.
@@ -108,6 +120,12 @@ get(Value, [CV, _, LC, _]) when Value < CV ->
   get(Value, LC);
 get(Value, [CV, _, _, RC]) when Value > CV ->
   get(Value, RC).
+
+
+% print
+print(Tree) ->
+  io:format("~w~n", [Tree]),
+  Tree.
 
 
 % utility
