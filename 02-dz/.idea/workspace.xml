@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a1032ccc-8373-4fc5-87c9-0a64de8c97e9" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/balancer_serv.erl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/store.app" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/store.erl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/store_log.erl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/store_serv.erl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/store_sup.erl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="a1032ccc-8373-4fc5-87c9-0a64de8c97e9" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -57,7 +49,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1668025711267</updated>
-      <workItem from="1668025712520" duration="7220000" />
+      <workItem from="1668025712520" duration="7481000" />
     </task>
     <servers />
   </component>
