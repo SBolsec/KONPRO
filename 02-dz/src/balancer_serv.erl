@@ -52,7 +52,7 @@ handle_call(stop, _From, {NumberServ, OtherServ}) ->
   gen_server:call(NumberServ, stop),
   gen_server:call(OtherServ, stop),
   {stop, normal, stopped, {NumberServ, OtherServ}};
-handle_call({find, Value}, _From, {NumberServ, OtherServ}) when is_integer(Value) ->
+handle_call({find, Value}, _From, {NumberServ, OtherServ}) when is_number(Value) ->
   io:format("Balancer: Find ~w on ~w, process: ~w~n", [Value, NumberServ, self()]),
   Reply = gen_server:call(NumberServ, {find, Value}),
   io:format("Balancer: Found ~w, process: ~w~n", [Reply, self()]),
@@ -63,7 +63,7 @@ handle_call({find, Value}, _From, {NumberServ, OtherServ}) ->
   io:format("Balancer: Found ~w, process: ~w~n", [Reply, self()]),
   {reply, Reply, {NumberServ, OtherServ}}.
 
-handle_cast({add, Value}, {NumberServ, OtherServ}) when is_integer(Value) ->
+handle_cast({add, Value}, {NumberServ, OtherServ}) when is_number(Value) ->
   io:format("Balancer: Add ~w on ~w, process: ~w~n", [Value, NumberServ, self()]),
   gen_server:cast(NumberServ, {add, Value}),
   {noreply, {NumberServ, OtherServ}};
@@ -71,7 +71,7 @@ handle_cast({add, Value}, {NumberServ, OtherServ}) ->
   io:format("Balancer: Add ~w on ~w, process: ~w~n", [Value, OtherServ, self()]),
   gen_server:cast(OtherServ, {add, Value}),
   {noreply, {NumberServ, OtherServ}};
-handle_cast({delete, Value}, {NumberServ, OtherServ}) when is_integer(Value) ->
+handle_cast({delete, Value}, {NumberServ, OtherServ}) when is_number(Value) ->
   io:format("Balancer: Delete ~w on ~w, process: ~w~n", [Value, NumberServ, self()]),
   gen_server:cast(NumberServ, {add, Value}),
   {noreply, {NumberServ, OtherServ}};

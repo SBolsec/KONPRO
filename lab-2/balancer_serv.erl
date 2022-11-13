@@ -39,7 +39,7 @@ main(NumberServ, OtherServ) ->
 send({NumberServ, OtherServ}, {Action, Value}) ->
     check_servers(NumberServ, OtherServ),
     if
-        is_integer(Value) ->
+        is_number(Value) ->
             NumberServ ! {self(), {Action, Value}};
         true ->
             OtherServ ! {self(), {Action, Value}}
