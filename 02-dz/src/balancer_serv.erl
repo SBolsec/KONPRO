@@ -18,6 +18,7 @@
 %%%===================================================================
 
 start_link(NumberServ, OtherServ) ->
+  io:format("Balancer: Starting, process: ~w~n", [self()]),
   gen_server:start_link({local, ?SERVER}, ?MODULE, {NumberServ, OtherServ}, []).
 
 stop() ->
@@ -43,27 +44,39 @@ debug(ServName) ->
 %%%===================================================================
 
 init({NumberServ, OtherServ}) ->
+  io:format("Balancer: Init, process: ~w~n", [self()]),
   {ok, {NumberServ, OtherServ}}.
 
-handle_call(stop, _From, State) ->
-  {stop, normal, stopped, State};
+handle_call(stop, _From, {NumberServ, OtherServ}) ->
+  io:format("Balancer: Stopping, process: ~w~n", [self()]),
+  gen_server:call(NumberServ, stop),
+  gen_server:call(OtherServ, stop),
+  {stop, normal, stopped, {NumberServ, OtherServ}};
 handle_call({find, Value}, _From, {NumberServ, OtherServ}) when is_integer(Value) ->
+  io:format("Balancer: Find ~w on ~w, process: ~w~n", [Value, NumberServ, self()]),
   Reply = gen_server:call(NumberServ, {find, Value}),
+  io:format("Balancer: Found ~w, process: ~w~n", [Reply, self()]),
   {reply, Reply, {NumberServ, OtherServ}};
 handle_call({find, Value}, _From, {NumberServ, OtherServ}) ->
+  io:format("Balancer: Find ~w on ~w, process: ~w~n", [Value, OtherServ, self()]),
   Reply = gen_server:call(OtherServ, {find, Value}),
+  io:format("Balancer: Found ~w, process: ~w~n", [Reply, self()]),
   {reply, Reply, {NumberServ, OtherServ}}.
 
 handle_cast({add, Value}, {NumberServ, OtherServ}) when is_integer(Value) ->
+  io:format("Balancer: Add ~w on ~w, process: ~w~n", [Value, NumberServ, self()]),
   gen_server:cast(NumberServ, {add, Value}),
   {noreply, {NumberServ, OtherServ}};
 handle_cast({add, Value}, {NumberServ, OtherServ}) ->
+  io:format("Balancer: Add ~w on ~w, process: ~w~n", [Value, OtherServ, self()]),
   gen_server:cast(OtherServ, {add, Value}),
   {noreply, {NumberServ, OtherServ}};
 handle_cast({delete, Value}, {NumberServ, OtherServ}) when is_integer(Value) ->
+  io:format("Balancer: Delete ~w on ~w, process: ~w~n", [Value, NumberServ, self()]),
   gen_server:cast(NumberServ, {add, Value}),
   {noreply, {NumberServ, OtherServ}};
 handle_cast({delete, Value}, {NumberServ, OtherServ}) ->
+  io:format("Balancer: Delete ~w on ~w, process: ~w~n", [Value, OtherServ, self()]),
   gen_server:cast(OtherServ, {add, Value}),
   {noreply, {NumberServ, OtherServ}};
 handle_cast({debug, ServName}, {NumberServ, OtherServ}) when ServName == NumberServ ->
