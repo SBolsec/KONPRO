@@ -2,13 +2,12 @@ package com.sbolsec;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class Main {
 
     public static final int MAP_SIZE = 5;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         final LocationServer locationServer = new LocationServer(MAP_SIZE, MAP_SIZE);
 
         final Agent[] agents = {
@@ -21,9 +20,6 @@ public class Main {
         for (Agent agent : agents) {
             poll.submit(agent);
         }
-
-        poll.awaitTermination(60, TimeUnit.SECONDS);
-        System.out.println("Main: done");
     }
 
 }
