@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 @XmlType(name = "programme")
 public class Programme {
 
+    private Long id;
+
     @XmlAttribute
     @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
     private LocalDateTime start;
