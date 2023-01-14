@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Subscription</title>
+</head>
+
+<body class="bg-gray-200 h-full">
+<header class="bg-gray-800 text-white px-48 py-2">
+    <div class="container mx-auto flex justify-between items-center">
+        <div>
+            <p>TV Programs</p>
+        </div>
+        <div class="flex justify-end space-x-4 items-center">
+            <p th:text="${username}"></p>
+            <a href="/logout" class="bg-red-500 hover:bg-red-600 px-4 py-1 rounded-lg">
+                Log out
+            </a>
+        </div>
+    </div>
+</header>
+
+<main class="container mx-auto px-48 flex flex-col space-y-4 mx-auto pb-6">
+
+    <div class="bg-gray-50 rounded-lg shadow-lg p-4 mt-6">
+        <form action="unsubscribe" method="post">
+            <div class="flex justify-between items-center mb-4">
+                <h1 class="font-bold text-lg">Current Subscription</h1>
+                <button id="submitButton" type="submit"
+                        class="bg-red-500 hover:bg-red-600 text-white rounded-lg px-4 py-2">
+                    Unsubscribe
+                </button>
+            </div>
+            <div>
+                <h2 class="font-bold text-md" th:text="${programme.title}"></h2>
+                <div class="text-gray-400">
+                    <span th:text="${programme.start}"></span>
+                    <span> - </span>
+                    <span th:text="${programme.stop}"></span>
+                </div>
+                <p th:text="${programme.description}"></p>
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-gray-50 rounded-lg shadow-lg p-4">
+        <h2 class="font-bold text-lg mb-2">Remaining Time</h2>
+        <div id="remaining-time" class="space-y-4"></div>
+    </div>
+
+</main>
+
+<script src="subscription.js"></script>
+
+</body>
+
+</html>
